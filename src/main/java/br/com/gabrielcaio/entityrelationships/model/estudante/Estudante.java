@@ -29,8 +29,6 @@ public class Estudante {
     @ManyToMany(mappedBy = "estudantes")
     private List<Curso> cursos = new ArrayList<>();
 
-    // ---
-    // auditoria
     @Column(updatable = false, name = "data_criacao")
     @CreatedDate
     private LocalDateTime dataCriacao;
@@ -39,6 +37,5 @@ public class Estudante {
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 
-    // ---
 }
 

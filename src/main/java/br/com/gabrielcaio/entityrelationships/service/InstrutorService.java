@@ -1,14 +1,25 @@
 package br.com.gabrielcaio.entityrelationships.service;
 
+import br.com.gabrielcaio.entityrelationships.controllers.error.DataBaseException;
+import br.com.gabrielcaio.entityrelationships.controllers.error.ResourceNotFoundException;
 import br.com.gabrielcaio.entityrelationships.controllers.mapper.InstrutorMapper;
 import br.com.gabrielcaio.entityrelationships.model.instrutor.CreateInstrutorDTO;
 import br.com.gabrielcaio.entityrelationships.model.instrutor.Instrutor;
+import br.com.gabrielcaio.entityrelationships.model.instrutor.InstrutorWithPerfilResponse;
+import br.com.gabrielcaio.entityrelationships.model.instrutor.UpdateInstrutorDTO;
 import br.com.gabrielcaio.entityrelationships.model.perfil.Perfil;
+import br.com.gabrielcaio.entityrelationships.model.perfil.UpdatePerfilDTO;
 import br.com.gabrielcaio.entityrelationships.repositories.InstrutorRepository;
+import br.com.gabrielcaio.entityrelationships.validator.ValidadorAtualizacaoInstrutor;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorCriacaoInstrutor;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,12 +27,12 @@ public class InstrutorService {
 
     private final InstrutorRepository instrutorRepository;
     private final ValidadorCriacaoInstrutor validadorCriacaoInstrutor;
+    private final ValidadorAtualizacaoInstrutor validadorAtualizacaoInstrutor;
 
     @Transactional
     public Instrutor salvar(CreateInstrutorDTO dto) {
 
         // transforma os dto para  as entidades
-        // TODO: refatorar essa funcionalidade desta vez usando MapStruct]
         Instrutor instrutor = InstrutorMapper.INSTANCE.toEntityFromCreateInstrutorDTO(dto);
         Perfil perfil = instrutor.getPerfil();
 
@@ -41,4 +52,66 @@ public class InstrutorService {
         // retorna o instrutor salvo
         return instrutorRepository.save(instrutor);
     }
+
+    @Transactional(readOnly = true)
+    public Instrutor getById(Long instrutorID) {
+        // buscar no banco de dados o instrutor por id
+        return instrutorRepository
+                .findById(instrutorID)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado."));
+    }
+
+    public Page<Instrutor> findAll(Pageable pageable) {
+        return instrutorRepository.findAll(pageable);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void deleteById(Long instrutorID) {
+
+        // verifica se esse instrutor existe
+        if (!instrutorRepository.existsById(instrutorID)) {
+            throw new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado.");
+        }
+        try {
+            instrutorRepository.deleteById(instrutorID);
+        }catch (DataIntegrityViolationException e){
+            throw new DataBaseException("Falha de integridade referencial");
+        }
+
+    }
+
+    @Transactional
+    public Instrutor atualizar(Long instrutorID, UpdateInstrutorDTO dto) {
+
+        // obter o instrutor pelo id
+        Instrutor instrutor = instrutorRepository.findById(instrutorID).orElseThrow(() -> new ResourceNotFoundException(
+                "Instrutor com id " + instrutorID + " não encontrado."));
+
+        updateInstrutor(instrutor, dto);
+        var perfil = updatePerfil(instrutor.getPerfil(),dto.getPerfil());
+
+        perfil.setInstrutor(instrutor);
+        instrutor.setPerfil(perfil);
+
+        // validacao da atualizacao do instrutor
+        validadorAtualizacaoInstrutor.validar(instrutor);
+
+        // retorna o instrutor atualizado
+        return instrutorRepository.save(instrutor);
+    }
+
+    private void updateInstrutor(Instrutor instrutor, UpdateInstrutorDTO dto) {
+        if (!dto.getNome().isBlank()) {
+            instrutor.setNome(dto.getNome());
+        }
+    }
+
+    private Perfil updatePerfil(Perfil perfil, UpdatePerfilDTO dto) {
+        if (!dto.getBiografia().isBlank()) {
+            perfil.setBiografia(dto.getBiografia());
+        }
+        return perfil;
+    }
+
 }

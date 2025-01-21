@@ -39,8 +39,6 @@ public class Curso {
     )
     private List<Estudante> estudantes = new ArrayList<>();
 
-    // ---
-    // auditoria
     @Column(updatable = false, name = "data_criacao")
     @CreatedDate
     private LocalDateTime dataCriacao;
@@ -49,6 +47,5 @@ public class Curso {
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 
-    // ---
 }
 

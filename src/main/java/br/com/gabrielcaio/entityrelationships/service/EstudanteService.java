@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.entityrelationships.service;
 
+import br.com.gabrielcaio.entityrelationships.controllers.error.DataBaseException;
 import br.com.gabrielcaio.entityrelationships.controllers.error.ResourceNotFoundException;
 import br.com.gabrielcaio.entityrelationships.controllers.mapper.EstudanteMapper;
 import br.com.gabrielcaio.entityrelationships.model.curso.Curso;
@@ -8,9 +9,13 @@ import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
 import br.com.gabrielcaio.entityrelationships.repositories.CursoRepository;
 import br.com.gabrielcaio.entityrelationships.repositories.EstudanteRepository;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorCriacaoEstudante;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,11 +56,29 @@ public class EstudanteService {
                 .collect(Collectors.toList());
     }
 
-
     public Estudante getEstudanteWithCurso(Long id) {
         return estudanteRepository
                 .getEstudanteByIdWithCurso(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Estudante com id " + id + " não foi encontrado."));
+    }
+
+    public Page<Estudante> findAll(Pageable pageable) {
+        return estudanteRepository.findAll(pageable);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void deleteById(Long estudanteId) {
+
+        // verifica se esse estudante existe
+        if (!estudanteRepository.existsById(estudanteId)) {
+            throw new ResourceNotFoundException("Estudante com id " + estudanteId + " não foi encontrado.");
+        }
+        try {
+            estudanteRepository.deleteById(estudanteId);
+        }catch (DataIntegrityViolationException e){
+            throw new DataBaseException("Falha de integridade referencial");
+        }
+
     }
 }

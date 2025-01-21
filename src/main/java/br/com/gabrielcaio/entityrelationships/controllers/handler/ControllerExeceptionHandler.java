@@ -2,10 +2,7 @@ package br.com.gabrielcaio.entityrelationships.controllers.handler;
 
 import java.time.Instant;
 
-import br.com.gabrielcaio.entityrelationships.controllers.error.EntityExistsException;
-import br.com.gabrielcaio.entityrelationships.controllers.error.ErrorMessage;
-import br.com.gabrielcaio.entityrelationships.controllers.error.ResourceNotFoundException;
-import br.com.gabrielcaio.entityrelationships.controllers.error.ValidationError;
+import br.com.gabrielcaio.entityrelationships.controllers.error.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +38,8 @@ public class ControllerExeceptionHandler {
         return ResponseEntity.status(status).body(err);
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorMessage> handlerDataIntegrityViolation(DataIntegrityViolationException e, HttpServletRequest request) {
+    @ExceptionHandler(DataBaseException.class)
+    public ResponseEntity<ErrorMessage> handlerDataBase(DataBaseException e, HttpServletRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErrorMessage err = new ErrorMessage(Instant.now(),status.value(), e.getMessage(),request.getRequestURI());
         return ResponseEntity.status(status).body(err);
@@ -53,12 +50,16 @@ public class ControllerExeceptionHandler {
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
         ValidationError err = new ValidationError(Instant.now(),status.value(), "Dados invalidos",request.getRequestURI());
 
-        /*e.getFieldErrors().forEach(fieldError -> {
+//        for (FieldError fieldError : e.getBindingResult().getFieldErrors()){
+//            err.addError(fieldError.getField(), fieldError.getDefaultMessage());
+//        }
+//        for (FieldError fieldError : e.getFieldErrors()) {
+//            err.addError(fieldError.getField(), fieldError.getDefaultMessage());
+//        }
+
+        e.getFieldErrors().forEach(fieldError -> {
             err.addError(fieldError.getField(), fieldError.getDefaultMessage());
-        });*/
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            err.addError(fieldError.getField(), fieldError.getDefaultMessage());
-        }
+        });
         return ResponseEntity.status(status).body(err);
     }
 

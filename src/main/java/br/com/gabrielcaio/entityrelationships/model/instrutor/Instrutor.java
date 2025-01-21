@@ -34,8 +34,6 @@ public class Instrutor {
     @JoinColumn(name = "perfil_id", referencedColumnName = "perfil_id", nullable = false)
     private Perfil perfil;
 
-    // ---
-    // auditoria
     @Column(updatable = false, name = "data_criacao")
     @CreatedDate
     private LocalDateTime dataCriacao;
@@ -44,6 +42,5 @@ public class Instrutor {
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 
-    // ---
 }
 
