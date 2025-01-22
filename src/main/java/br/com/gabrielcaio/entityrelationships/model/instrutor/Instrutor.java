@@ -27,7 +27,7 @@ public class Instrutor {
 
     private String nome;
 
-    @OneToMany(mappedBy = "instrutor")
+    @OneToMany(mappedBy = "instrutor", fetch = FetchType.LAZY)
     private List<Curso> cursos = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

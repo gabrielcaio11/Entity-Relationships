@@ -19,7 +19,7 @@ public class ValidadorCriacaoInstrutor {
     private void validarExistenciaInstrutorPorNome(Instrutor instrutor) {
         String nomeDoInstrutor = instrutor.getNome();
         // não pode existir um instrutor com esse mesmo nome no banco de dados
-        if (instrutorRepository.existsExistsByNomeAllIgnoreCase(nomeDoInstrutor)) {
+        if (instrutorRepository.existsByNomeIgnoreCase(nomeDoInstrutor)) {
             throw new EntityExistsException("O nome de um instrutor não pode ser duplicado");
         }
     }

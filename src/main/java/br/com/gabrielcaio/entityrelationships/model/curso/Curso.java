@@ -31,7 +31,7 @@ public class Curso {
     @JoinColumn(name = "instrutor_id", nullable = false)
     private Instrutor instrutor;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "curso_estudante", // nome da tabela intermediaria
             joinColumns = @JoinColumn(name = "curso_id"), // fk da entidade deste lado(Curso)

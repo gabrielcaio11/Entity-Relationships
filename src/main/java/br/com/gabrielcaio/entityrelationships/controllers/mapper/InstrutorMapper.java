@@ -12,4 +12,6 @@ public interface InstrutorMapper {
     InstrutorMapper INSTANCE = Mappers.getMapper(InstrutorMapper.class);
     Instrutor toEntityFromCreateInstrutorDTO(CreateInstrutorDTO dto);
     InstrutorWithPerfilResponse toInstrutorWithPerfilResponseFromInstrutor(Instrutor instrutor);
+
+    Instrutor toEntityFromUpdateInstrutorDTO(UpdateInstrutorDTO dto);
 }

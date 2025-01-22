@@ -26,7 +26,7 @@ public class Estudante {
 
     private String nome;
 
-    @ManyToMany(mappedBy = "estudantes")
+    @ManyToMany(mappedBy = "estudantes",fetch = FetchType.LAZY)
     private List<Curso> cursos = new ArrayList<>();
 
     @Column(updatable = false, name = "data_criacao")

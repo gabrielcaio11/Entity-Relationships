@@ -55,15 +55,17 @@ public class InstrutorService {
 
     @Transactional(readOnly = true)
     public Instrutor getById(Long instrutorID) {
-        // buscar no banco de dados o instrutor por id
-        return instrutorRepository
-                .findById(instrutorID)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado."));
+         //buscar no banco de dados o instrutor por id
+        return instrutorRepository.findByIdWithPerfilAndCursos(instrutorID).orElseThrow(
+                () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado."));
+//        return instrutorRepository
+//                .findById(instrutorID)
+//                .orElseThrow(
+//                        () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado."));
     }
 
     public Page<Instrutor> findAll(Pageable pageable) {
-        return instrutorRepository.findAll(pageable);
+        return instrutorRepository.findAllIdWithPerfilAndCursos(pageable);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -88,14 +90,16 @@ public class InstrutorService {
         Instrutor instrutor = instrutorRepository.findById(instrutorID).orElseThrow(() -> new ResourceNotFoundException(
                 "Instrutor com id " + instrutorID + " não encontrado."));
 
+        // validacao da atualizacao do instrutor atraves dos campos do UpdateInstrutorDTO
+        validadorAtualizacaoInstrutor.validar(InstrutorMapper.INSTANCE.toEntityFromUpdateInstrutorDTO(dto));
+
+        // atualizacao dos campos da entidade instrutor
         updateInstrutor(instrutor, dto);
         var perfil = updatePerfil(instrutor.getPerfil(),dto.getPerfil());
 
+        // consistencia na persistencia
         perfil.setInstrutor(instrutor);
         instrutor.setPerfil(perfil);
-
-        // validacao da atualizacao do instrutor
-        validadorAtualizacaoInstrutor.validar(instrutor);
 
         // retorna o instrutor atualizado
         return instrutorRepository.save(instrutor);
