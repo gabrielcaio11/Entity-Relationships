@@ -2,6 +2,7 @@ package br.com.gabrielcaio.entityrelationships.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,6 +26,18 @@ public class SecurityConfig {
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> {
+
+                    authorize.requestMatchers(HttpMethod.POST,"/estudantes").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.DELETE,"/estudantes/**").hasRole("ADMIN");
+
+                    authorize.requestMatchers(HttpMethod.POST,"/instrutores").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.DELETE,"/instrutores/**").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.PUT,"/instrutores/**").hasAuthority("UPDATE_INSTRUTOR");
+
+                    authorize.requestMatchers(HttpMethod.POST,"/cursos").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.DELETE,"/cursos/**").hasRole("ADMIN");
+                    authorize.requestMatchers(HttpMethod.PUT,"/cursos/**").hasAuthority("UPDATE_CURSO");
+
                     authorize.anyRequest().authenticated();
                 })
                 .build();
@@ -40,13 +53,14 @@ public class SecurityConfig {
         UserDetails user = User.builder()
                 .username("user")
                 .password(passwordEncoder.encode("password")) // Criptografa a senha
-                .roles("USER")
+                .roles("USER") // Por padrão, o Spring Security espera que os roles no banco ou no sistema sejam prefixados com "ROLE_"
                 .build();
 
         UserDetails admin = User.builder()
                 .username("admin")
                 .password(passwordEncoder.encode("admin"))
                 .roles("ADMIN")
+                .authorities("UPDATE_INSTRUTOR","UPDATE_CURSO","POST_ESTUDANTE")
                 .build();
 
         return new InMemoryUserDetailsManager(user, admin);
