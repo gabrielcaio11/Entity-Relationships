@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,6 +25,7 @@ public class InstrutorController {
     private final InstrutorService instrutorService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InstrutorWithPerfilResponse> salvar(@RequestBody CreateInstrutorDTO dto){
 
         // chama o service para salvar o instrutor
@@ -39,6 +41,7 @@ public class InstrutorController {
     }
 
     @GetMapping(value = "/{instrutorID}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<InstrutorWithPerfilResponse> getById(@PathVariable("instrutorID") Long instrutorID){
 
         // chama o service para buscar o instrutor por um id especifico
@@ -54,6 +57,7 @@ public class InstrutorController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<InstrutorWithPerfilResponse>> getAll(
             @RequestParam(required = false,defaultValue = "0") Integer pageNumber,
             @RequestParam(required = false, defaultValue = "10") Integer pageSize
@@ -72,6 +76,7 @@ public class InstrutorController {
     }
 
     @DeleteMapping(value = "/{instrutorId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable("instrutorId") Long instrutorId){
 
         // chama o service para deletar o instrutor
@@ -82,6 +87,7 @@ public class InstrutorController {
     }
 
     @PutMapping(value = "/{instrutorID}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<InstrutorWithPerfilResponse> atualizar(@PathVariable("instrutorID") Long instrutorID, @RequestBody UpdateInstrutorDTO dto){
 
         // chama o service para atualizar o instrutor

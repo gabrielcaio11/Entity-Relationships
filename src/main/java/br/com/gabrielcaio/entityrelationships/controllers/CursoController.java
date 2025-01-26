@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,7 @@ public class CursoController {
     private final CursoService cursoService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CursoResponseDTO> salvar(@RequestBody CreateCursoDTO dto) {
 
         // chama o service para salvar o curso
@@ -35,6 +37,7 @@ public class CursoController {
     }
 
     @PutMapping("/{cursoID}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CursoResponseDTO> atualizarInstrutorCurso(@PathVariable Long cursoID, @RequestBody UpdateCursoDTO dto) {
 
         // chama o service para salvar o curso
@@ -49,6 +52,7 @@ public class CursoController {
     }
 
     @GetMapping(value = "/{cursoId}/details")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<CursoDetails> getById(@PathVariable("cursoId") Long cursoId) {
 
         // chama o service para buscar o curso por um id especifico
@@ -63,6 +67,7 @@ public class CursoController {
     }
 
     @GetMapping(value = "/details")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<CursoDetails>> getAll(
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(required = false, defaultValue = "10") Integer pageSize
@@ -83,6 +88,7 @@ public class CursoController {
     }
 
     @DeleteMapping(value = "/{CursoId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable("instrutorID") Long instrutorID) {
 
         // chama o service para deletar o curso

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +20,7 @@ public class EstudanteController {
     private final EstudanteService estudanteService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstudanteWithCurcoResponse> salvar(@RequestBody CreateEstudanteDTO dto) {
 
         // chama o service para salvar o estudante
@@ -33,6 +35,7 @@ public class EstudanteController {
     }
 
     @GetMapping("{estudante_id}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<EstudanteWithCurcoResponse> getById(@PathVariable Long estudante_id) {
 
         // chama o service para buscar o estudante
@@ -47,6 +50,7 @@ public class EstudanteController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<Page<EstudanteWithCurcoResponse>> getAll(
             @RequestParam(required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
@@ -65,6 +69,7 @@ public class EstudanteController {
     }
 
     @DeleteMapping(value = "/{estudanteId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable("estudanteId") Long instrutorID) {
 
         // chama o service para deletar o estudante
