@@ -6,8 +6,10 @@ import br.com.gabrielcaio.entityrelationships.controllers.mapper.EstudanteMapper
 import br.com.gabrielcaio.entityrelationships.model.curso.Curso;
 import br.com.gabrielcaio.entityrelationships.model.estudante.CreateEstudanteDTO;
 import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
+import br.com.gabrielcaio.entityrelationships.model.usuario.Usuario;
 import br.com.gabrielcaio.entityrelationships.repositories.CursoRepository;
 import br.com.gabrielcaio.entityrelationships.repositories.EstudanteRepository;
+import br.com.gabrielcaio.entityrelationships.security.SecurityService;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorCriacaoEstudante;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,6 +29,7 @@ public class EstudanteService {
     private final EstudanteRepository estudanteRepository;
     private final CursoRepository cursoRepository;
     private final ValidadorCriacaoEstudante validadorCriacaoEstudante;
+    private final SecurityService securityService;
 
     @Transactional
     public Estudante salvar(CreateEstudanteDTO dto) {
@@ -37,6 +40,14 @@ public class EstudanteService {
 
         // Busca os cursos validos
         List<Curso> cursos = buscarCursos(dto.getCursosIDs());
+
+        // obter usuario autenticado para auditoria
+        Usuario userAuthenticated = securityService.getUserAuthenticated();
+
+        // consistencia na persistencia
+
+        // Configura o usuario no objeto Estudante
+        estudante.setUsuario(userAuthenticated);
 
         // Associa os cursos ao estudante(consistencia na persistencia)
         estudante.setCursos(cursos);
@@ -69,7 +80,6 @@ public class EstudanteService {
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void deleteById(Long estudanteId) {
-
         // verifica se esse estudante existe
         if (!estudanteRepository.existsById(estudanteId)) {
             throw new ResourceNotFoundException("Estudante com id " + estudanteId + " não foi encontrado.");
@@ -79,6 +89,5 @@ public class EstudanteService {
         }catch (DataIntegrityViolationException e){
             throw new DataBaseException("Falha de integridade referencial");
         }
-
     }
 }

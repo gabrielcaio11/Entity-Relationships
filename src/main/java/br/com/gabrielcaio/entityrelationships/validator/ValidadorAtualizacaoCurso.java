@@ -1,6 +1,5 @@
 package br.com.gabrielcaio.entityrelationships.validator;
 
-import br.com.gabrielcaio.entityrelationships.controllers.error.EntityExistsException;
 import br.com.gabrielcaio.entityrelationships.controllers.error.ResourceNotFoundException;
 import br.com.gabrielcaio.entityrelationships.model.curso.UpdateCursoDTO;
 import br.com.gabrielcaio.entityrelationships.repositories.CursoRepository;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ValidadorAtualizacaoCurso {
+
     private final CursoRepository cursoRepository;
     private final InstrutorRepository instrutorRepository;
 

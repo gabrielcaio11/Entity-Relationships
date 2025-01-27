@@ -7,8 +7,10 @@ import br.com.gabrielcaio.entityrelationships.model.curso.CreateCursoDTO;
 import br.com.gabrielcaio.entityrelationships.model.curso.Curso;
 import br.com.gabrielcaio.entityrelationships.model.curso.UpdateCursoDTO;
 import br.com.gabrielcaio.entityrelationships.model.instrutor.Instrutor;
+import br.com.gabrielcaio.entityrelationships.model.usuario.Usuario;
 import br.com.gabrielcaio.entityrelationships.repositories.CursoRepository;
 import br.com.gabrielcaio.entityrelationships.repositories.InstrutorRepository;
+import br.com.gabrielcaio.entityrelationships.security.SecurityService;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorAtualizacaoCurso;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorCriacaoCurso;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +29,23 @@ public class CursoService {
     private final InstrutorRepository instrutorRepository;
     private final ValidadorCriacaoCurso validadorCriacaoCurso;
     private final ValidadorAtualizacaoCurso validadorAtualizacaoCurso;
+    private final SecurityService securityService;
 
     @Transactional
     public Curso salvarCurso(CreateCursoDTO dto) {
-
         // transforma de dto para entidade
         Curso curso = CursoMapper.INSTANCE.toEntityFromCreateCursoDTO(dto);
 
         // validacao da criação do curso
         validadorCriacaoCurso.validar(curso, dto.getInstrutorId());
+
+        // obter usuario autenticado para auditoria
+        Usuario userAuthenticated = securityService.getUserAuthenticated();
+
+        // consistencia na persistencia
+
+        // Configura o usuario no objeto Curso
+        curso.setUsuario(userAuthenticated);
 
         // busca no banco de dados o instrutor pelo id
         Instrutor instrutor = instrutorRepository.getReferenceById(dto.getInstrutorId());
@@ -78,7 +88,6 @@ public class CursoService {
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void deleteById(Long cursoId) {
-
         // verifica se esse curso existe
         if (!cursoRepository.existsById(cursoId)) {
             throw new ResourceNotFoundException("Curso com id " + cursoId + " não foi encontrado.");
@@ -88,6 +97,5 @@ public class CursoService {
         }catch (DataIntegrityViolationException e){
             throw new DataBaseException("Falha de integridade referencial");
         }
-
     }
 }

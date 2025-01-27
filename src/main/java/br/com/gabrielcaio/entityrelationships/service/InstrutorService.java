@@ -9,7 +9,9 @@ import br.com.gabrielcaio.entityrelationships.model.instrutor.InstrutorWithPerfi
 import br.com.gabrielcaio.entityrelationships.model.instrutor.UpdateInstrutorDTO;
 import br.com.gabrielcaio.entityrelationships.model.perfil.Perfil;
 import br.com.gabrielcaio.entityrelationships.model.perfil.UpdatePerfilDTO;
+import br.com.gabrielcaio.entityrelationships.model.usuario.Usuario;
 import br.com.gabrielcaio.entityrelationships.repositories.InstrutorRepository;
+import br.com.gabrielcaio.entityrelationships.security.SecurityService;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorAtualizacaoInstrutor;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorCriacaoInstrutor;
 
@@ -28,10 +30,10 @@ public class InstrutorService {
     private final InstrutorRepository instrutorRepository;
     private final ValidadorCriacaoInstrutor validadorCriacaoInstrutor;
     private final ValidadorAtualizacaoInstrutor validadorAtualizacaoInstrutor;
+    private final SecurityService securityService;
 
     @Transactional
     public Instrutor salvar(CreateInstrutorDTO dto) {
-
         // transforma os dto para  as entidades
         Instrutor instrutor = InstrutorMapper.INSTANCE.toEntityFromCreateInstrutorDTO(dto);
         Perfil perfil = instrutor.getPerfil();
@@ -39,7 +41,14 @@ public class InstrutorService {
         // validacao da criação do instrutor
         validadorCriacaoInstrutor.validar(instrutor);
 
+
+        // obter usuario autenticado para auditoria
+        Usuario userAuthenticated = securityService.getUserAuthenticated();
+
         // consistencia na persistencia
+
+        // Configura o usuario no objeto Instrutor
+        instrutor.setUsuario(userAuthenticated);
 
         // Configura o perfil no objeto Instrutor, estabelecendo a relação entre o Instrutor e o Perfil.
         // Isso assegura que o lado do Instrutor esteja associado corretamente ao Perfil.
@@ -58,10 +67,6 @@ public class InstrutorService {
          //buscar no banco de dados o instrutor por id
         return instrutorRepository.findByIdWithPerfilAndCursos(instrutorID).orElseThrow(
                 () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado."));
-//        return instrutorRepository
-//                .findById(instrutorID)
-//                .orElseThrow(
-//                        () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado."));
     }
 
     public Page<Instrutor> findAll(Pageable pageable) {
@@ -70,7 +75,6 @@ public class InstrutorService {
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void deleteById(Long instrutorID) {
-
         // verifica se esse instrutor existe
         if (!instrutorRepository.existsById(instrutorID)) {
             throw new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado.");
@@ -80,12 +84,10 @@ public class InstrutorService {
         }catch (DataIntegrityViolationException e){
             throw new DataBaseException("Falha de integridade referencial");
         }
-
     }
 
     @Transactional
     public Instrutor atualizar(Long instrutorID, UpdateInstrutorDTO dto) {
-
         // obter o instrutor pelo id
         Instrutor instrutor = instrutorRepository.findById(instrutorID).orElseThrow(() -> new ResourceNotFoundException(
                 "Instrutor com id " + instrutorID + " não encontrado."));
@@ -117,5 +119,4 @@ public class InstrutorService {
         }
         return perfil;
     }
-
 }

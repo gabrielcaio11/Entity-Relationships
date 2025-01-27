@@ -23,5 +23,4 @@ public class ValidadorAtualizacaoInstrutor {
             throw new EntityExistsException("O nome de um instrutor não pode ser duplicado");
         }
     }
-
 }

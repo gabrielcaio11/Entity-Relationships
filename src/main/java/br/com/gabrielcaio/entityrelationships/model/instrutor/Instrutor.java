@@ -2,6 +2,7 @@ package br.com.gabrielcaio.entityrelationships.model.instrutor;
 
 import br.com.gabrielcaio.entityrelationships.model.curso.Curso;
 import br.com.gabrielcaio.entityrelationships.model.perfil.Perfil;
+import br.com.gabrielcaio.entityrelationships.model.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -42,5 +43,8 @@ public class Instrutor {
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 }
 

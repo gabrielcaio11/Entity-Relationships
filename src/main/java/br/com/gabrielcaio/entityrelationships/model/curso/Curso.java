@@ -2,6 +2,7 @@ package br.com.gabrielcaio.entityrelationships.model.curso;
 
 import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
 import br.com.gabrielcaio.entityrelationships.model.instrutor.Instrutor;
+import br.com.gabrielcaio.entityrelationships.model.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -47,5 +48,8 @@ public class Curso {
     @LastModifiedDate
     private LocalDateTime dataAtualizacao;
 
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 }
 

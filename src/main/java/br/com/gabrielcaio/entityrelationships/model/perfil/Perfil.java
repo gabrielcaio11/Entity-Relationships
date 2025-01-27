@@ -26,5 +26,4 @@ public class Perfil {
 
     @OneToOne(mappedBy = "perfil")
     private Instrutor instrutor;
-
 }

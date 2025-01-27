@@ -10,7 +10,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class CreatePerfilDTO {
-
     @NotBlank(message = "A Biografia é um campo obrigatório.")
     @Size(max = 1234, min = 10, message = "a biografia do perfil do instrutor precisa estar no no intervalo de 10 a 1234 caracteres.")
     private String biografia;
