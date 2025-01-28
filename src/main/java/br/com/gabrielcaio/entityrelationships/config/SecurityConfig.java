@@ -17,7 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true
+)
 public class SecurityConfig {
 
     @Bean
@@ -30,6 +33,7 @@ public class SecurityConfig {
                     authorize.requestMatchers(HttpMethod.POST,"/usuarios/**").permitAll();
                     authorize.anyRequest().authenticated();
                 })
+                .oauth2Login(Customizer.withDefaults())
                 .build();
     }
 
