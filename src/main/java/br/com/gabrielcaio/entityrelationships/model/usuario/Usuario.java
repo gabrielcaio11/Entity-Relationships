@@ -27,7 +27,7 @@ public class Usuario {
     @Column(name = "senha")
     private String senha;
 
-    @Column(name = "email")
+    @Column(name = "email",unique = true)
     private String email;
 
     @Type(ListArrayType.class)

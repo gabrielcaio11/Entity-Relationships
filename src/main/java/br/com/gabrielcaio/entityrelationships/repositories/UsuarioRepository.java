@@ -6,6 +6,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
-  Usuario findByLogin(String login);
-  Usuario findByEmail(String email);
+
+    /**
+     * Retrieves a user by their login.
+     *
+     * @param login the login of the user
+     * @return the user with the given login
+     */
+    Usuario findByLogin(String login);
+
+    /**
+     * Retrieves a user by their email.
+     *
+     * @param email the email of the user
+     * @return the user with the given email
+     */
+    Usuario findByEmail(String email);
 }
