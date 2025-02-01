@@ -58,6 +58,7 @@ public class CursoService {
         return cursoRepository.save(curso);
     }
 
+    @Transactional
     public Curso atualizarInstrutorCurso(Long id,UpdateCursoDTO dto) {
         // validacao atualizacao curso
         validadorAtualizacaoCurso.validar( id, dto );
@@ -78,10 +79,12 @@ public class CursoService {
         return cursoRepository.save(curso);
     }
 
+    @Transactional(readOnly = true)
     public Curso getById(Long cursoId) {
         return cursoRepository.findById(cursoId).orElseThrow(()-> new ResourceNotFoundException("Curso  com id " + cursoId + " não encontrado."));
     }
 
+    @Transactional(readOnly = true)
     public Page<Curso> findAll(PageRequest pageable) {
         return cursoRepository.findAll(pageable);
     }

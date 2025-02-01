@@ -40,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return User.builder()
                 .username(usuario.getLogin()) // Define o login do usuário.
                 .password(usuario.getSenha()) // Define a senha do usuário.
-                .roles(usuario.getRoles().toArray(new String[usuario.getRoles().size()])) // Define as roles do usuário.
+                .roles(usuario.getRoles().toArray(new String[0])) // Define as roles do usuário.
                 .build();
     }
 }

@@ -60,16 +60,22 @@ public class SecurityConfig {
                 .build(); // Constrói e retorna a cadeia de filtros de segurança.
     }
 
+    /**
+     * Configura o WebSecurityCustomizer para ignorar determinadas requisições de segurança.
+     * Isso permite que endpoints específicos sejam acessados sem autenticação.
+     *
+     * @return Instância de WebSecurityCustomizer configurada.
+     */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> web.ignoring().requestMatchers(
-                "/v2/api-docs/**",
-                "/v3/api-docs/**",
-                "/swagger-resources/**",
-                "/swagger-ui.html",
-                "/swagger-ui/**",
-                "/webjars/**",
-                "/actuator/**"
+                "/v2/api-docs/**", // Ignora requisições para a documentação da API (Swagger v2).
+                "/v3/api-docs/**", // Ignora requisições para a documentação da API (Swagger v3).
+                "/swagger-resources/**", // Ignora requisições para recursos do Swagger.
+                "/swagger-ui.html", // Ignora requisições para a página HTML do Swagger UI.
+                "/swagger-ui/**", // Ignora requisições para os recursos do Swagger UI.
+                "/webjars/**", // Ignora requisições para recursos estáticos do Webjars.
+                "/actuator/**" // Ignora requisições para os endpoints de monitoramento do Actuator.
         );
     }
 
@@ -85,7 +91,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(10);
     }
 
-    /**
+     /**
      * Personaliza o prefixo padrão para autoridades (roles) no Spring Security.
      * Por padrão, o Spring Security adiciona o prefixo "ROLE_" às roles.
      * Este método remove esse prefixo, permitindo que as roles sejam usadas sem ele.
@@ -97,4 +103,5 @@ public class SecurityConfig {
         // Retorna uma instância de GrantedAuthorityDefaults com prefixo vazio.
         return new GrantedAuthorityDefaults("");
     }
+
 }
