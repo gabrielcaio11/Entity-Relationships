@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Manipulador de sucesso para autenticação social (OAuth2).
@@ -25,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor // Gera um construtor com todos os campos obrigatórios (final).
 public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    private static final String SENHA_PADRAO = "321"; // Senha padrão para novos usuários cadastrados via OAuth2.
+    private static final String SENHA_PADRAO = "33333333"; // Senha padrão para novos usuários cadastrados via OAuth2.
 
     private final UsuarioService usuarioService; // Serviço para buscar e salvar usuários no banco de dados.
 
@@ -44,7 +45,8 @@ public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSu
     public void onAuthenticationSuccess(
             HttpServletRequest request,
             HttpServletResponse response,
-            Authentication authentication) throws ServletException, IOException {
+            Authentication authentication
+    ) throws ServletException, IOException {
 
         // Converte o objeto de autenticação para OAuth2AuthenticationToken.
         OAuth2AuthenticationToken auth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
@@ -56,15 +58,13 @@ public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSu
         String email = oAuth2User.getAttribute("email");
 
         // Busca o usuário no banco de dados pelo e-mail.
-        Usuario usuario = usuarioService.obterPorEmail(email);
+        Optional<Usuario> usuario = usuarioService.obterPorEmail(email);
 
         // Se o usuário não existir, cadastra um novo usuário.
-        if (usuario == null) {
-            usuario = cadastrarUsuarioNaBase(email);
-        }
+        Usuario usuarioAuthenticacao = usuario.orElseGet(() -> cadastrarUsuarioNaBase(email));
 
         // Cria uma nova autenticação personalizada com o usuário encontrado ou cadastrado.
-        authentication = new CustomAuthentication(usuario);
+        authentication = new CustomAuthentication(usuarioAuthenticacao);
 
         // Define a autenticação no contexto de segurança do Spring.
         SecurityContextHolder.getContext().setAuthentication(authentication);

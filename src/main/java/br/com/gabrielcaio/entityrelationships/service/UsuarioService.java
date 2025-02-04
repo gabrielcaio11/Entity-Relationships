@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
@@ -19,11 +21,11 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    public Usuario obterPorLogin(String login){
+    public Optional<Usuario> obterPorLogin(String login){
         return usuarioRepository.findByLogin(login);
     }
 
-    public Usuario obterPorEmail(String email){
+    public Optional<Usuario> obterPorEmail(String email){
         return usuarioRepository.findByEmail(email);
     }
 }

@@ -28,7 +28,18 @@ public class CustomAuthentication implements Authentication {
      * @return Coleção de GrantedAuthority representando as roles do usuário.
      */
     @Override
-    public Collection<GrantedAuthority> getAuthorities() {
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+//          A conversão das roles do usuário em instâncias de GrantedAuthority
+//          é necessária para que o Spring Security possa gerenciar
+//          as permissões e autorizações do usuário de forma adequada.
+//          O Spring Security utiliza objetos do tipo GrantedAuthority
+//          para representar as permissões concedidas a um usuário.
+//          Ao converter as roles do usuário em SimpleGrantedAuthority,
+//          o código garante que o Spring Security possa interpretar
+//          e aplicar corretamente essas permissões
+//          durante o processo de autenticação e autorização.
+
         return this.usuario
                 .getRoles() // Obtém as roles do usuário.
                 .stream() // Converte a lista de roles em um stream.
@@ -73,6 +84,7 @@ public class CustomAuthentication implements Authentication {
      */
     @Override
     public boolean isAuthenticated() {
+        // se colocar false, o usuário não consegue acessar a aplicação
         return true; // Retorna true, indicando que o usuário está autenticado.
     }
 

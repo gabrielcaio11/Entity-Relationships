@@ -125,9 +125,9 @@ public class InstrutorController {
     public ResponseEntity<InstrutorWithPerfilResponse> atualizar(
             @Parameter(description = "ID do instrutor a ser atualizado", required = true) @PathVariable("instrutorID") Long instrutorID,
             @RequestBody UpdateInstrutorDTO dto
-    ){
+    ) {
         // chama o service para atualizar o instrutor
-        var instrutor = instrutorService.atualizar(instrutorID,dto);
+        var instrutor = instrutorService.atualizar(instrutorID, dto);
 
         // tranforma de instrutor para instrutor response
         var response = InstrutorMapper.INSTANCE.toInstrutorWithPerfilResponseFromInstrutor(instrutor);

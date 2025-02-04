@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LoginController {
 
     @GetMapping("/")
-    @ResponseBody
+    @ResponseBody // como eu estou usando o @Controller, eu preciso usar o @ResponseBody para retornar uma resposta HTTP
     public String paginaHome(Authentication authentication) {
         return "Olá "+ authentication.getName();
     }

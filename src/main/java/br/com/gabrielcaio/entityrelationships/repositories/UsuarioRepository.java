@@ -3,6 +3,7 @@ package br.com.gabrielcaio.entityrelationships.repositories;
 import br.com.gabrielcaio.entityrelationships.model.usuario.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
@@ -13,7 +14,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
      * @param login the login of the user
      * @return the user with the given login
      */
-    Usuario findByLogin(String login);
+    Optional<Usuario> findByLogin(String login);
 
     /**
      * Retrieves a user by their email.
@@ -21,5 +22,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
      * @param email the email of the user
      * @return the user with the given email
      */
-    Usuario findByEmail(String email);
+    Optional<Usuario> findByEmail(String email);
 }

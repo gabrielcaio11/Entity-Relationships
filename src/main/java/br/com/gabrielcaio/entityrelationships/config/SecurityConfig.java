@@ -60,6 +60,8 @@ public class SecurityConfig {
                 .build(); // Constrói e retorna a cadeia de filtros de segurança.
     }
 
+    // não estamos usando o bean CustomUserDetailsService porque estamos usando o CustomAuthenticationProvider
+
     /**
      * Configura o WebSecurityCustomizer para ignorar determinadas requisições de segurança.
      * Isso permite que endpoints específicos sejam acessados sem autenticação.

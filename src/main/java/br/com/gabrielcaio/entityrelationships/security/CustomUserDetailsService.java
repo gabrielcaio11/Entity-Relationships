@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Optional;
+
 /**
  * Implementação personalizada de UserDetailsService.
  * Esta classe é responsável por carregar os detalhes do usuário (UserDetails) com base no login fornecido.
@@ -28,19 +30,19 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         // Busca o usuário pelo login no banco de dados.
-        Usuario usuario = service.obterPorLogin(login);
+        Optional<Usuario> usuario = service.obterPorLogin(login);
 
         // Verifica se o usuário foi encontrado.
-        if (usuario == null) {
+        if (usuario.isEmpty()) {
             // Lança uma exceção se o usuário não for encontrado.
             throw new UsernameNotFoundException("Usuário não encontrado!");
         }
 
         // Constrói e retorna um objeto UserDetails com as informações do usuário.
         return User.builder()
-                .username(usuario.getLogin()) // Define o login do usuário.
-                .password(usuario.getSenha()) // Define a senha do usuário.
-                .roles(usuario.getRoles().toArray(new String[0])) // Define as roles do usuário.
+                .username(usuario.get().getLogin()) // Define o login do usuário.
+                .password(usuario.get().getSenha()) // Define a senha do usuário.
+                .roles(usuario.get().getRoles().toArray(new String[0])) // Define as roles do usuário.
                 .build();
     }
 }

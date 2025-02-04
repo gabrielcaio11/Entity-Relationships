@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Implementação personalizada de AuthenticationProvider para autenticação de usuários.
  * Esta classe é responsável por validar as credenciais do usuário (login e senha)
@@ -40,23 +42,23 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String senhaDigitada = authentication.getCredentials().toString();
 
         // Busca o usuário pelo login fornecido.
-        Usuario usuarioEncontrado = usuarioService.obterPorLogin(login);
+        Optional<Usuario> usuarioEncontrado = usuarioService.obterPorLogin(login);
 
         // Verifica se o usuário foi encontrado.
-        if (usuarioEncontrado == null) {
+        if (usuarioEncontrado.isEmpty()) {
             // Lança uma exceção se o usuário não for encontrado.
             throw getErroUsuarioNaoEncontrado();
         }
 
         // Obtém a senha criptografada do usuário encontrado.
-        String senhaCriptografada = usuarioEncontrado.getSenha();
+        String senhaCriptografada = usuarioEncontrado.get().getSenha();
 
         // Verifica se a senha digitada corresponde à senha criptografada.
         boolean senhasBatem = isMatches(senhaDigitada, senhaCriptografada);
 
         // Se as senhas corresponderem, retorna um objeto de autenticação personalizado.
         if (senhasBatem) {
-            return new CustomAuthentication(usuarioEncontrado);
+            return new CustomAuthentication(usuarioEncontrado.get());
         }
 
         // Lança uma exceção se as senhas não corresponderem.
@@ -80,6 +82,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
      * @return UsernameNotFoundException com uma mensagem de erro.
      */
     private UsernameNotFoundException getErroUsuarioNaoEncontrado() {
+        // é recomendavel não informar se o login ou a senha precisamente esta erradp
         return new UsernameNotFoundException("Usuário e/ou senha incorretos!");
     }
 
