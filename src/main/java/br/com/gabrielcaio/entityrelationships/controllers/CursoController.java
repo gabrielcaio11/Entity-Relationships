@@ -47,7 +47,7 @@ public class CursoController {
         var cursoResponse = CursoMapper.INSTANCE.toCursoResponseFromEntity(curso);
 
         // retorna o curso response
-        return ResponseEntity.status(HttpStatus.OK).body(cursoResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cursoResponse);
     }
 
     @PutMapping(value = "/{cursoID}")

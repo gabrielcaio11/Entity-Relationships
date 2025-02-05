@@ -1,12 +1,9 @@
-package br.com.gabrielcaio.entityrelationships.model.usuario;
+package br.com.gabrielcaio.entityrelationships.model.client;
 
-import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -16,23 +13,23 @@ import java.util.UUID;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Usuario {
+public class Client {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "login",unique = true)
-    private String login;
+    @Column(name = "client_id")
+    private String clientId;
 
-    @Column(name = "senha")
-    private String senha;
+    @Column(name = "client_secret")
+    private String clientSecret;
 
-    @Column(name = "email",unique = true)
-    private String email;
+    @Column(name = "redirect_uri")
+    private String redirectURI;
 
-    @Type(ListArrayType.class)
-    @Column(name = "roles", columnDefinition = "varchar[]")
-    private List<String> roles;
+    @Column(name = "scope")
+    private String scope;
 
     @Override
     public final boolean equals(Object o) {
@@ -41,12 +38,14 @@ public class Usuario {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Usuario usuario = (Usuario) o;
-        return getId() != null && Objects.equals(getId(), usuario.getId());
+        Client client = (Client) o;
+        return getId() != null && Objects.equals(getId(), client.getId());
     }
 
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+
 }
