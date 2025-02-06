@@ -19,8 +19,8 @@ public class ClientController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ClientResponseDto> salvar(@RequestBody CreateClientDto client){
-        service.salvar(client);
+    public ResponseEntity<ClientResponseDto> salvar(@RequestBody CreateClientDto dto){
+        service.salvar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
