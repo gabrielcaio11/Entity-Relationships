@@ -1,9 +1,14 @@
 package br.com.gabrielcaio.entityrelationships.model.instrutor;
 
 import br.com.gabrielcaio.entityrelationships.model.perfil.CreatePerfilDTO;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Setter
+/**
+ * DTO for {@link Instrutor}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

@@ -4,9 +4,10 @@ import br.com.gabrielcaio.entityrelationships.model.perfil.UpdatePerfilDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
+/**
+ * DTO for {@link Instrutor}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

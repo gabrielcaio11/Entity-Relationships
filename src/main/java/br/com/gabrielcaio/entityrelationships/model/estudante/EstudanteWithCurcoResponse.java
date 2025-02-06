@@ -6,7 +6,9 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
+/**
+ * DTO for {@link Estudante}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

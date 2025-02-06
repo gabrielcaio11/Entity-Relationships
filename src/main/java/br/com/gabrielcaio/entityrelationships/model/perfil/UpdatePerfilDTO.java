@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+/**
+ * DTO for {@link Perfil}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

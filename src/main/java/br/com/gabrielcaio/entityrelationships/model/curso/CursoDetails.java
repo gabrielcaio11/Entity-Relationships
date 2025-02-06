@@ -10,7 +10,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
+/**
+ * DTO for {@link Curso}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

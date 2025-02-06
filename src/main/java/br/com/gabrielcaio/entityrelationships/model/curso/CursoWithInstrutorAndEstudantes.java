@@ -4,7 +4,9 @@ import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
 import br.com.gabrielcaio.entityrelationships.model.instrutor.Instrutor;
 import lombok.*;
 
-@Setter
+/**
+ * DTO for {@link Curso}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

@@ -3,7 +3,9 @@ package br.com.gabrielcaio.entityrelationships.model.instrutor;
 import br.com.gabrielcaio.entityrelationships.model.perfil.PerfilResponse;
 import lombok.*;
 
-@Setter
+/**
+ * DTO for {@link Instrutor}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

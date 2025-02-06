@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+/**
+ * DTO for {@link Curso}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

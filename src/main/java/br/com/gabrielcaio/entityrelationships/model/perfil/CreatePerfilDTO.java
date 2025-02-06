@@ -2,9 +2,14 @@ package br.com.gabrielcaio.entityrelationships.model.perfil;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Setter
+/**
+ * DTO for {@link Perfil}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

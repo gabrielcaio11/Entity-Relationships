@@ -2,7 +2,7 @@ package br.com.gabrielcaio.entityrelationships.controllers;
 
 
 import br.com.gabrielcaio.entityrelationships.controllers.mapper.UsuarioMapper;
-import br.com.gabrielcaio.entityrelationships.model.usuario.UsuarioDTO;
+import br.com.gabrielcaio.entityrelationships.model.usuario.CreateUsuarioDTO;
 import br.com.gabrielcaio.entityrelationships.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class UsuarioController {
     private final UsuarioService service;
 
     @PostMapping
-    public ResponseEntity<Void> salvar(@RequestBody @Valid UsuarioDTO dto){
+    public ResponseEntity<Void> salvar(@RequestBody @Valid CreateUsuarioDTO dto){
         var usuario = UsuarioMapper.INSTANCE.toEntity(dto);
         service.salvar(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).build();

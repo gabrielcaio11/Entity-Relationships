@@ -2,7 +2,9 @@ package br.com.gabrielcaio.entityrelationships.model.curso;
 
 import lombok.*;
 
-@Setter
+/**
+ * DTO for {@link Curso}
+ */
 @Getter
 @AllArgsConstructor
 @Builder

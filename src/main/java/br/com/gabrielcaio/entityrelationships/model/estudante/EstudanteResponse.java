@@ -2,7 +2,9 @@ package br.com.gabrielcaio.entityrelationships.model.estudante;
 
 import lombok.*;
 
-@Setter
+/**
+ * DTO for {@link Estudante}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

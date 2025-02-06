@@ -3,9 +3,13 @@ package br.com.gabrielcaio.entityrelationships.model.curso;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Setter
+/**
+ * DTO for {@link Curso}
+ */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
