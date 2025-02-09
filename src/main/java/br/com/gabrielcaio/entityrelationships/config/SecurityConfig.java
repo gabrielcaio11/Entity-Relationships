@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -31,7 +33,7 @@ public class SecurityConfig {
      * Configura a cadeia de filtros de segurança (SecurityFilterChain).
      * Define como as requisições HTTP serão tratadas em termos de autenticação e autorização.
      *
-     * @param http Objeto HttpSecurity usado para configurar as regras de segurança.
+     * @param http           Objeto HttpSecurity usado para configurar as regras de segurança.
      * @param successHandler Manipulador de sucesso personalizado para autenticação OAuth2.
      * @return SecurityFilterChain configurado.
      * @throws Exception Caso ocorra algum erro durante a configuração.
@@ -57,6 +59,11 @@ public class SecurityConfig {
                     oauth2
                             .successHandler(successHandler); // Define o manipulador de sucesso para autenticação OAuth2.
                 })
+                .oauth2ResourceServer(oauth2RS -> {
+                    // Configura o servidor de recursos OAuth2.
+                    oauth2RS
+                            .jwt(Customizer.withDefaults());
+                })
                 .build(); // Constrói e retorna a cadeia de filtros de segurança.
     }
 
@@ -69,7 +76,7 @@ public class SecurityConfig {
      * @return Instância de WebSecurityCustomizer configurada.
      */
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
+    public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(
                 "/v2/api-docs/**", // Ignora requisições para a documentação da API (Swagger v2).
                 "/v3/api-docs/**", // Ignora requisições para a documentação da API (Swagger v3).
@@ -81,19 +88,8 @@ public class SecurityConfig {
         );
     }
 
-    /**
-     * Define um bean para codificar senhas.
-     * O BCryptPasswordEncoder é um codificador seguro e amplamente utilizado.
-     *
-     * @return Instância de PasswordEncoder usando BCrypt.
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        // Cria uma instância do BCryptPasswordEncoder com força de hashing 10.
-        return new BCryptPasswordEncoder(10);
-    }
 
-     /**
+    /**
      * Personaliza o prefixo padrão para autoridades (roles) no Spring Security.
      * Por padrão, o Spring Security adiciona o prefixo "ROLE_" às roles.
      * Este método remove esse prefixo, permitindo que as roles sejam usadas sem ele.
@@ -104,6 +100,25 @@ public class SecurityConfig {
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         // Retorna uma instância de GrantedAuthorityDefaults com prefixo vazio.
         return new GrantedAuthorityDefaults("");
+    }
+
+    /**
+     * Configures the JWT authentication converter.
+     * Defines how authorities (roles) will be extracted from the JWT token.
+     *
+     * @return Configured instance of JwtAuthenticationConverter.
+     */
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        // Cria um conversor de autoridades JWT e remove o prefixo padrão "ROLE_"
+        var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+
+        // Cria um conversor de autenticação JWT e define o conversor de autoridades JWT
+        var converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+
+        return converter;
     }
 
 }

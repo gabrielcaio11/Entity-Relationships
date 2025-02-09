@@ -17,18 +17,19 @@ public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
     private UUID id;
 
-    @Column(name = "client_id")
+    @Column(name = "client_id", unique = true, nullable = false,length = 150)
     private String clientId;
 
-    @Column(name = "client_secret")
+    @Column(name = "client_secret", nullable = false,length = 500)
     private String clientSecret;
 
-    @Column(name = "redirect_uri")
+    @Column(name = "redirect_uri", nullable = false,length = 200)
     private String redirectURI;
 
-    @Column(name = "scope")
+    @Column(name = "scope",length = 50)
     private String scope;
 
     @Override
@@ -46,6 +47,5 @@ public class Client {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
-
 
 }

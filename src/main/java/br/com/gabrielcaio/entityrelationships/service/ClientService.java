@@ -5,6 +5,7 @@ import br.com.gabrielcaio.entityrelationships.model.client.Client;
 import br.com.gabrielcaio.entityrelationships.model.client.ClientResponseDto;
 import br.com.gabrielcaio.entityrelationships.model.client.CreateClientDto;
 import br.com.gabrielcaio.entityrelationships.repositories.ClientRepository;
+import br.com.gabrielcaio.entityrelationships.validator.ValidadorRegistroClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,21 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
     private final PasswordEncoder encoder;
+    private final ValidadorRegistroClient validadorRegistroClient;
 
-    public ClientResponseDto salvar(CreateClientDto dto) {
+    public void salvar(CreateClientDto dto) {
+
+        // transforma de dto para entidade
         var client = ClientMapper.INSTANCE.toEntityFromCreateClienteDto(dto);
+
+        // validacao do registro do client
+        validadorRegistroClient.validar(client);
+
+        // criptografa a senha do client
         var senhaCriptografada = encoder.encode(client.getClientSecret());
         client.setClientSecret(senhaCriptografada);
+
         var clientSave = clientRepository.save(client);
-        return ClientMapper.INSTANCE.toClientResponseFromEntity(clientSave);
     }
 
     public Optional<Client> obterPorClientID(String clientId) {
