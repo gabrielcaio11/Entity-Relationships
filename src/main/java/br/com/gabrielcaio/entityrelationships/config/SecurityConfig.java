@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.entityrelationships.config;
 
+import br.com.gabrielcaio.entityrelationships.security.CustomJwtAuthenticationFilter;
 import br.com.gabrielcaio.entityrelationships.security.LoginSocialSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -41,7 +43,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            LoginSocialSuccessHandler successHandler
+            LoginSocialSuccessHandler successHandler,
+            CustomJwtAuthenticationFilter customJwtAuthenticationFilter
     ) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // Desabilita a proteção CSRF (comum em APIs RESTful).
@@ -64,6 +67,13 @@ public class SecurityConfig {
                     oauth2RS
                             .jwt(Customizer.withDefaults());
                 })
+                .addFilterAfter(
+                        // Adiciona um filtro de autenticação JWT personalizado após o filtro de autenticação OAuth2.
+                        customJwtAuthenticationFilter,
+                        // Define a classe do filtro de autenticação OAuth2 como filtro de referência.
+                        // o filtro que recebe o token e faz a verificacao e gera a authentication CustomJwtAuthenticationFilter
+                        BearerTokenAuthenticationFilter.class
+                )
                 .build(); // Constrói e retorna a cadeia de filtros de segurança.
     }
 

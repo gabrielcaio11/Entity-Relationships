@@ -1,5 +1,6 @@
 package br.com.gabrielcaio.entityrelationships.config;
 
+import br.com.gabrielcaio.entityrelationships.security.CustomAuthentication;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -11,14 +12,19 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.security.KeyPair;
@@ -26,6 +32,8 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Configuration
@@ -89,10 +97,23 @@ public class AuthorizationServerConfiguration {
      */
     @Bean
     public TokenSettings tokenSettings() {
-        return TokenSettings.builder()
-                .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
-                .accessTokenTimeToLive(Duration.ofMinutes(10))
-                .build();
+       // Cria uma instância de TokenSettings com as configurações definidas
+                return TokenSettings.builder()
+
+                        // Define o formato do token de acesso como SELF_CONTAINED (autocontido)
+                        .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+
+                        // access_token: token utilizado nas requisições para acessar recursos protegidos
+                        // acess token é autocontido, ou seja, todas as informações necessárias estão no token
+                        // Define o tempo de vida do token de acesso para 60 minutos
+                        .accessTokenTimeToLive(Duration.ofMinutes(60))
+
+                        // refresh_token: token utilizado para obter um novo access_token (quando o access_token expira)
+                        // Define o tempo de vida do token de atualização para 90 minutos
+                        // o refresh_token sempre tem um tempo de vida maior que o access_token
+                        .refreshTokenTimeToLive(Duration.ofMinutes(90))
+
+                        .build();
     }
 
     /**
@@ -174,4 +195,68 @@ public class AuthorizationServerConfiguration {
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
+
+    @Bean
+    public AuthorizationServerSettings authorizationServerSettings(){
+        return AuthorizationServerSettings.builder()
+
+                // obter token independente do grant type
+                .tokenEndpoint("/oauth2/token")
+
+                // utilizado para consultar status() do token
+                .tokenIntrospectionEndpoint("/oauth2/introspect")
+
+                // revogar o token
+                .tokenRevocationEndpoint("/oauth2/revoke")
+
+                // endpoint para autorização
+                .authorizationEndpoint("/oauth2/authorize")
+
+                // informações do cliente OPEN ID CONNECT
+                .oidcUserInfoEndpoint("oauth2/userinfo")
+
+                // obter a chave publica para verificar a assinatura do token
+                .jwkSetEndpoint("/oauth2/jwks")
+
+                // endpoint para fazer o logout
+                .oidcLogoutEndpoint("/oauth2/logout")
+
+                .build();
+    }
+
+    /**
+     * Bean responsável por customizar o token JWT gerado pelo Spring Security OAuth2.
+     *
+     * Esse customizador adiciona claims personalizadas ao token, como as authorities (permissões)
+     * do usuário autenticado e seu email.
+     */
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
+        return context -> {
+            // Obtém o usuário autenticado
+            var principal = context.getPrincipal();
+
+            // Verifica se o principal é uma instância de CustomAuthentication
+            if (principal instanceof CustomAuthentication authentication) {
+                OAuth2TokenType tipoToken = context.getTokenType();
+
+                // Se for um token de acesso, adiciona claims personalizadas
+                if (OAuth2TokenType.ACCESS_TOKEN.equals(tipoToken)) {
+                    var authorities = authentication.getAuthorities();
+
+                    // Converte as authorities para uma lista de strings
+                    List<String> authoritiesList = authorities.stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .toList();
+
+                    // Adiciona as claims personalizadas ao token JWT
+                    context.getClaims()
+                            .claim("authorities", authoritiesList) // Adiciona as authorities do usuário
+                            .claim("email", authentication.getUsuario().getEmail()); // Adiciona o email do usuário
+                }
+            }
+        };
+    }
+
 }
+
