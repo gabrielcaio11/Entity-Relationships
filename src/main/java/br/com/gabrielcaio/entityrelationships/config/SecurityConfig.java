@@ -47,7 +47,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // Desabilita a proteção CSRF (comum em APIs RESTful).
                 .formLogin(Customizer.withDefaults()) // Habilita o login baseado em formulário com configurações padrão.
-                .httpBasic(Customizer.withDefaults()) // Habilita a autenticação básica HTTP (usando username e password).
+                //.httpBasic(Customizer.withDefaults()) // Habilita a autenticação básica HTTP (usando username e password).
                 .authorizeHttpRequests(authorize -> {
                     // Permite requisições POST para /usuarios/** sem autenticação.
                     authorize.requestMatchers(HttpMethod.POST, "/usuarios/**").permitAll();
@@ -85,6 +85,7 @@ public class SecurityConfig {
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
+        // urls utilizadas pelo swagger e openapi
         return web -> web.ignoring().requestMatchers(
                 "/v2/api-docs/**", // Ignora requisições para a documentação da API (Swagger v2).
                 "/v3/api-docs/**", // Ignora requisições para a documentação da API (Swagger v3).
