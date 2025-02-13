@@ -2,7 +2,6 @@ package br.com.gabrielcaio.entityrelationships.service;
 
 import br.com.gabrielcaio.entityrelationships.controllers.mapper.ClientMapper;
 import br.com.gabrielcaio.entityrelationships.model.client.Client;
-import br.com.gabrielcaio.entityrelationships.model.client.ClientResponseDto;
 import br.com.gabrielcaio.entityrelationships.model.client.CreateClientDto;
 import br.com.gabrielcaio.entityrelationships.repositories.ClientRepository;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorRegistroClient;
@@ -23,7 +22,7 @@ public class ClientService {
     public void salvar(CreateClientDto dto) {
 
         // transforma de dto para entidade
-        var client = ClientMapper.INSTANCE.toEntityFromCreateClienteDto(dto);
+        var client = ClientMapper.INSTANCE.toEntity(dto);
 
         // validacao do registro do client
         validadorRegistroClient.validar(client);
