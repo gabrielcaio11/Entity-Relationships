@@ -31,7 +31,7 @@ public class ClientService {
         var senhaCriptografada = encoder.encode(client.getClientSecret());
         client.setClientSecret(senhaCriptografada);
 
-        var clientSave = clientRepository.save(client);
+        clientRepository.save(client);
     }
 
     public Optional<Client> obterPorClientID(String clientId) {
