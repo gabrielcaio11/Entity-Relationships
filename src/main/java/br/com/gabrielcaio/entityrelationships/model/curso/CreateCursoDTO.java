@@ -14,10 +14,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateCursoDTO {
+
     @NotBlank
     @Size(max = 100,min = 5, message = "o nome do curso precisa estar no no intervalo de 5 a 100 caracteres.")
     private String nome;
 
     @NotNull(message = "o numero do identificador do instrutor não pode ser null.")
     private Long instrutorId;
+
 }

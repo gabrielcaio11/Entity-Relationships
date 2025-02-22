@@ -7,10 +7,14 @@ import br.com.gabrielcaio.entityrelationships.model.instrutor.UpdateInstrutorDTO
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {PerfilMapper.class})
 public interface InstrutorMapper {
+
     InstrutorMapper INSTANCE = Mappers.getMapper(InstrutorMapper.class);
-    Instrutor toEntityFromCreateInstrutorDTO(CreateInstrutorDTO dto);
+
     InstrutorWithPerfilResponse toInstrutorWithPerfilResponseFromInstrutor(Instrutor instrutor);
+
+    Instrutor toEntityFromCreateInstrutorDTO(CreateInstrutorDTO dto);
+
     Instrutor toEntityFromUpdateInstrutorDTO(UpdateInstrutorDTO dto);
 }

@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -22,11 +21,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/cursos")
-@RequiredArgsConstructor
 @Tag(name = "Cursos", description = "Operações relacionadas a cursos")
 public class CursoController {
 
     private final CursoService cursoService;
+    private final CursoMapper cursoMapper;
+
+    public CursoController(CursoService cursoService, CursoMapper cursoMapper) {
+        this.cursoService = cursoService;
+        this.cursoMapper = cursoMapper;
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -44,7 +48,7 @@ public class CursoController {
         var curso = cursoService.salvarCurso(dto);
 
         // tranforma de curso para curso response
-        var cursoResponse = CursoMapper.INSTANCE.toCursoResponseFromEntity(curso);
+        var cursoResponse = cursoMapper.toCursoResponseDTO(curso);
 
         // retorna o curso response
         return ResponseEntity.status(HttpStatus.CREATED).body(cursoResponse);
@@ -68,7 +72,7 @@ public class CursoController {
         var curso = cursoService.atualizarInstrutorCurso(cursoID, dto);
 
         // tranforma de curso para curso response
-        var cursoAtualizado = CursoMapper.INSTANCE.toCursoResponseFromEntity(curso);
+        var cursoAtualizado = cursoMapper.toCursoResponseDTO(curso);
 
         // retorna o curso response
         return ResponseEntity.status(HttpStatus.OK).body(cursoAtualizado);
@@ -89,7 +93,7 @@ public class CursoController {
         var curso = cursoService.getById(cursoId);
 
         // tranforma de curso para curso response
-        var cursoDetails = CursoMapper.INSTANCE.toCursoDetailsFromEntity(curso);
+        var cursoDetails = cursoMapper.toCursoDetails(curso);
 
         // retorna o curso response
         return ResponseEntity.status(HttpStatus.OK).body(cursoDetails);
@@ -114,7 +118,7 @@ public class CursoController {
         var page = cursoService.findAll(pageable);
 
         // transforma a pagina de curso para uma pagina de curso response
-        var pageResponse = page.map(CursoMapper.INSTANCE::toCursoDetailsFromEntity);
+        var pageResponse = page.map(cursoMapper::toCursoDetails);
 
         // retorna a pagina de curso response
         return ResponseEntity.status(HttpStatus.OK).body(pageResponse);

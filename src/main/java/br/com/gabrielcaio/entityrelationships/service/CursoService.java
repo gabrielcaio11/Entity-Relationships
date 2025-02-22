@@ -30,11 +30,12 @@ public class CursoService {
     private final ValidadorCriacaoCurso validadorCriacaoCurso;
     private final ValidadorAtualizacaoCurso validadorAtualizacaoCurso;
     private final SecurityService securityService;
+    private  CursoMapper CursoMapper;
 
     @Transactional
     public Curso salvarCurso(CreateCursoDTO dto) {
         // transforma de dto para entidade
-        Curso curso = CursoMapper.INSTANCE.toEntityFromCreateCursoDTO(dto);
+        Curso curso = CursoMapper.toEntity(dto);
 
         // validacao da criação do curso
         validadorCriacaoCurso.validar(curso, dto.getInstrutorId());

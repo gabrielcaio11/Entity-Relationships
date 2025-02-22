@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * DTO for {@link Curso}
  */
-@Getter
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class CursoDetails {
@@ -21,4 +21,36 @@ public class CursoDetails {
     private String nome;
     private InstrutorWithPerfilResponse instrutor;
     private List<EstudanteResponse> estudantes = new ArrayList<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public InstrutorWithPerfilResponse getInstrutor() {
+        return instrutor;
+    }
+
+    public List<EstudanteResponse> getEstudantes() {
+        return estudantes;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setInstrutor(InstrutorWithPerfilResponse instrutor) {
+        this.instrutor = instrutor;
+    }
+
+    public void setEstudantes(List<EstudanteResponse> estudantes) {
+        this.estudantes = estudantes;
+    }
 }
