@@ -1,0 +1,32 @@
+services:
+  api:
+    image: aula-docker-image
+    container_name: api_container
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - src/main/resources/.env
+    restart: always
+
+  db:
+    image: postgres:latest
+    container_name: postgres_container
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: Entity_Relationships
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1981fla*
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+    restart: always
+
+volumes:
+  postgres_data:
