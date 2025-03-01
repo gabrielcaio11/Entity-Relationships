@@ -84,7 +84,7 @@ public class LoginSocialSuccessHandler extends SavedRequestAwareAuthenticationSu
         usuario.setEmail(email); // Define o e-mail do usuário.
         usuario.setLogin(obterLoginApartirDoEmail(email)); // Gera um login a partir do e-mail.
         usuario.setSenha(SENHA_PADRAO); // Define uma senha padrão.
-        usuario.setRoles(List.of("OPERADOR")); // Define a role padrão como "OPERADOR".
+        usuario.setRoles(List.of("USER")); // Define a role padrão como "USER".
 
         // Salva o usuário no banco de dados.
         usuarioService.salvar(usuario);
