@@ -14,5 +14,6 @@ import java.util.List;
 public class EstudanteWithCurcoResponse {
     private Long id;
     private String nome;
+    @Builder.Default
     private List<CursoResponseDTO> cursos = new ArrayList<>();
 }

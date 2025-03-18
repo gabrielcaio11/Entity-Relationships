@@ -37,6 +37,7 @@ public class Curso {
             joinColumns = @JoinColumn(name = "curso_id"), // fk da entidade deste lado(Curso)
             inverseJoinColumns = @JoinColumn(name = "estudante_id") // fk da entidade do outro lado(Estudante)
     )
+    @Builder.Default
     private List<Estudante> estudantes = new ArrayList<>();
 
     @Column(updatable = false, name = "data_criacao")

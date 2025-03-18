@@ -1,20 +1,21 @@
 package br.com.gabrielcaio.entityrelationships.repositories;
 
-import br.com.gabrielcaio.entityrelationships.model.curso.Curso;
-import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
-/** testes feitos por ia*/
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import br.com.gabrielcaio.entityrelationships.model.curso.Curso;
+import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
+import jakarta.transaction.Transactional;
+
+/** testes feitos por ia */
 @SpringBootTest
 public class EstudanteRepositoryTest {
 
@@ -70,7 +71,6 @@ public class EstudanteRepositoryTest {
         assertThat(exists).isFalse();
     }
 
-
     @Test
     @Transactional
     public void shouldRetrieveEstudanteByIdWithAssociatedCursos() {
@@ -86,7 +86,7 @@ public class EstudanteRepositoryTest {
                 .isPresent()
                 .get()
                 .extracting("cursos")
-                .asList()
+                .asInstanceOf(LIST)
                 .hasSize(2)
                 .extracting("id")
                 .containsExactlyInAnyOrder(1L, 2L);
