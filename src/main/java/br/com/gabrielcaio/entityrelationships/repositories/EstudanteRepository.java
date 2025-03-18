@@ -1,11 +1,12 @@
 package br.com.gabrielcaio.entityrelationships.repositories;
 
-import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
 
 public interface EstudanteRepository extends JpaRepository<Estudante, Long> {
     @Query("SELECT COUNT(e) > 0 FROM Estudante e WHERE LOWER(e.nome) = LOWER(:nomeDoEstudante)")

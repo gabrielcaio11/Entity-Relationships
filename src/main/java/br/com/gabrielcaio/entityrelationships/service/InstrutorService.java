@@ -1,25 +1,24 @@
 package br.com.gabrielcaio.entityrelationships.service;
 
-import br.com.gabrielcaio.entityrelationships.controllers.error.DataBaseException;
-import br.com.gabrielcaio.entityrelationships.controllers.error.ResourceNotFoundException;
-import br.com.gabrielcaio.entityrelationships.controllers.mapper.InstrutorMapper;
-import br.com.gabrielcaio.entityrelationships.model.instrutor.CreateInstrutorDTO;
-import br.com.gabrielcaio.entityrelationships.model.instrutor.Instrutor;
-import br.com.gabrielcaio.entityrelationships.model.instrutor.InstrutorWithPerfilResponse;
-import br.com.gabrielcaio.entityrelationships.model.instrutor.UpdateInstrutorDTO;
-import br.com.gabrielcaio.entityrelationships.model.perfil.Perfil;
-import br.com.gabrielcaio.entityrelationships.model.perfil.UpdatePerfilDTO;
-import br.com.gabrielcaio.entityrelationships.repositories.InstrutorRepository;
-import br.com.gabrielcaio.entityrelationships.validator.ValidadorAtualizacaoInstrutor;
-import br.com.gabrielcaio.entityrelationships.validator.ValidadorCriacaoInstrutor;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import br.com.gabrielcaio.entityrelationships.controllers.error.DataBaseException;
+import br.com.gabrielcaio.entityrelationships.controllers.error.ResourceNotFoundException;
+import br.com.gabrielcaio.entityrelationships.controllers.mapper.InstrutorMapper;
+import br.com.gabrielcaio.entityrelationships.model.instrutor.CreateInstrutorDTO;
+import br.com.gabrielcaio.entityrelationships.model.instrutor.Instrutor;
+import br.com.gabrielcaio.entityrelationships.model.instrutor.UpdateInstrutorDTO;
+import br.com.gabrielcaio.entityrelationships.model.perfil.Perfil;
+import br.com.gabrielcaio.entityrelationships.model.perfil.UpdatePerfilDTO;
+import br.com.gabrielcaio.entityrelationships.repositories.InstrutorRepository;
+import br.com.gabrielcaio.entityrelationships.validator.ValidadorAtualizacaoInstrutor;
+import br.com.gabrielcaio.entityrelationships.validator.ValidadorCriacaoInstrutor;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class InstrutorService {
     @Transactional
     public Instrutor salvar(CreateInstrutorDTO dto) {
 
-        // transforma os dto para  as entidades
+        // transforma os dto para as entidades
         Instrutor instrutor = InstrutorMapper.INSTANCE.toEntityFromCreateInstrutorDTO(dto);
         Perfil perfil = instrutor.getPerfil();
 
@@ -41,11 +40,14 @@ public class InstrutorService {
 
         // consistencia na persistencia
 
-        // Configura o perfil no objeto Instrutor, estabelecendo a relação entre o Instrutor e o Perfil.
-        // Isso assegura que o lado do Instrutor esteja associado corretamente ao Perfil.
+        // Configura o perfil no objeto Instrutor, estabelecendo a relação entre o
+        // Instrutor e o Perfil.
+        // Isso assegura que o lado do Instrutor esteja associado corretamente ao
+        // Perfil.
         instrutor.setPerfil(perfil);
 
-        // Configura o instrutor no objeto Perfil, completando a relação bidirecional entre os dois objetos.
+        // Configura o instrutor no objeto Perfil, completando a relação bidirecional
+        // entre os dois objetos.
         // Este passo é necessário para manter a consistência no lado do Perfil.
         perfil.setInstrutor(instrutor);
 
@@ -55,13 +57,14 @@ public class InstrutorService {
 
     @Transactional(readOnly = true)
     public Instrutor getById(Long instrutorID) {
-         //buscar no banco de dados o instrutor por id
+        // buscar no banco de dados o instrutor por id
         return instrutorRepository.findByIdWithPerfilAndCursos(instrutorID).orElseThrow(
                 () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado."));
-//        return instrutorRepository
-//                .findById(instrutorID)
-//                .orElseThrow(
-//                        () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não foi encontrado."));
+        // return instrutorRepository
+        // .findById(instrutorID)
+        // .orElseThrow(
+        // () -> new ResourceNotFoundException("Instrutor com id " + instrutorID + " não
+        // foi encontrado."));
     }
 
     public Page<Instrutor> findAll(Pageable pageable) {
@@ -77,7 +80,7 @@ public class InstrutorService {
         }
         try {
             instrutorRepository.deleteById(instrutorID);
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new DataBaseException("Falha de integridade referencial");
         }
 
@@ -90,12 +93,13 @@ public class InstrutorService {
         Instrutor instrutor = instrutorRepository.findById(instrutorID).orElseThrow(() -> new ResourceNotFoundException(
                 "Instrutor com id " + instrutorID + " não encontrado."));
 
-        // validacao da atualizacao do instrutor atraves dos campos do UpdateInstrutorDTO
+        // validacao da atualizacao do instrutor atraves dos campos do
+        // UpdateInstrutorDTO
         validadorAtualizacaoInstrutor.validar(InstrutorMapper.INSTANCE.toEntityFromUpdateInstrutorDTO(dto));
 
         // atualizacao dos campos da entidade instrutor
         updateInstrutor(instrutor, dto);
-        var perfil = updatePerfil(instrutor.getPerfil(),dto.getPerfil());
+        var perfil = updatePerfil(instrutor.getPerfil(), dto.getPerfil());
 
         // consistencia na persistencia
         perfil.setInstrutor(instrutor);

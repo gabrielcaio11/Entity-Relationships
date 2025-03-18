@@ -1,11 +1,12 @@
 package br.com.gabrielcaio.entityrelationships.controllers.mapper;
 
-import br.com.gabrielcaio.entityrelationships.model.perfil.CreatePerfilDTO;
-import br.com.gabrielcaio.entityrelationships.model.perfil.Perfil;
-import br.com.gabrielcaio.entityrelationships.model.perfil.PerfilResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+
+import br.com.gabrielcaio.entityrelationships.model.perfil.CreatePerfilDTO;
+import br.com.gabrielcaio.entityrelationships.model.perfil.Perfil;
+import br.com.gabrielcaio.entityrelationships.model.perfil.PerfilResponse;
 
 @Mapper(componentModel = "spring")
 public interface PerfilMapper {
@@ -19,4 +20,4 @@ public interface PerfilMapper {
     @Mapping(source = "biografia", target = "biografia")
     @Mapping(source = "especialidade", target = "especialidade")
     PerfilResponse toPerfilResponseFromEntity(Perfil perfil);
-} 
+}

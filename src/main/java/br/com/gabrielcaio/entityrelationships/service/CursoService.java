@@ -1,5 +1,12 @@
 package br.com.gabrielcaio.entityrelationships.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import br.com.gabrielcaio.entityrelationships.controllers.error.DataBaseException;
 import br.com.gabrielcaio.entityrelationships.controllers.error.ResourceNotFoundException;
 import br.com.gabrielcaio.entityrelationships.controllers.mapper.CursoMapper;
@@ -12,12 +19,6 @@ import br.com.gabrielcaio.entityrelationships.repositories.InstrutorRepository;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorAtualizacaoCurso;
 import br.com.gabrielcaio.entityrelationships.validator.ValidadorCriacaoCurso;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,28 +49,29 @@ public class CursoService {
         return cursoRepository.save(curso);
     }
 
-    public Curso atualizarInstrutorCurso(Long id,UpdateCursoDTO dto) {
+    public Curso atualizarInstrutorCurso(Long id, UpdateCursoDTO dto) {
         // validacao atualizacao curso
-        validadorAtualizacaoCurso.validar( id, dto );
+        validadorAtualizacaoCurso.validar(id, dto);
 
         // busca no banco de dados o curso pelo id que vai ser atualizado
-        Curso curso = cursoRepository.getReferenceById( id );
+        Curso curso = cursoRepository.getReferenceById(id);
 
         // busca no banco de dados o instrutor pelo id
-        Instrutor instrutor = instrutorRepository.getReferenceById( dto.getInstrutorId() );
+        Instrutor instrutor = instrutorRepository.getReferenceById(dto.getInstrutorId());
 
         // Associa o curso ao novo instrutor(consistencia na persistencia)
-        curso.setInstrutor( instrutor );
+        curso.setInstrutor(instrutor);
 
         // Associa o instrutor ao seu novo curso
         instrutor.getCursos().add(curso);
-        
+
         // retorna o curso atualizado
         return cursoRepository.save(curso);
     }
 
     public Curso getById(Long cursoId) {
-        return cursoRepository.findById(cursoId).orElseThrow(()-> new ResourceNotFoundException("Curso  com id " + cursoId + " não encontrado."));
+        return cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso  com id " + cursoId + " não encontrado."));
     }
 
     public Page<Curso> findAll(PageRequest pageable) {
@@ -85,7 +87,7 @@ public class CursoService {
         }
         try {
             cursoRepository.deleteById(cursoId);
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new DataBaseException("Falha de integridade referencial");
         }
 

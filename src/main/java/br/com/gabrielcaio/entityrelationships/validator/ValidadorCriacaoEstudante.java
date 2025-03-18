@@ -1,10 +1,11 @@
 package br.com.gabrielcaio.entityrelationships.validator;
 
+import org.springframework.stereotype.Component;
+
 import br.com.gabrielcaio.entityrelationships.controllers.error.EntityExistsException;
 import br.com.gabrielcaio.entityrelationships.model.estudante.Estudante;
 import br.com.gabrielcaio.entityrelationships.repositories.EstudanteRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
